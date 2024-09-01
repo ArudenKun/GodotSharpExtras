@@ -2,5 +2,5 @@
 
 namespace GodotSharpExtras.SourceGenerators.Attributes;
 
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 public class NotifyAttribute : Attribute { }

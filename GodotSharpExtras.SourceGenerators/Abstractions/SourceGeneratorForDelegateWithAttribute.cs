@@ -11,7 +11,7 @@ public abstract class SourceGeneratorForDelegateWithAttribute<TAttribute>
 {
     protected abstract string GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        DelegateDeclarationSyntax node,
         INamedTypeSymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options
@@ -19,7 +19,7 @@ public abstract class SourceGeneratorForDelegateWithAttribute<TAttribute>
 
     protected sealed override string GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        DelegateDeclarationSyntax node,
         ISymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options

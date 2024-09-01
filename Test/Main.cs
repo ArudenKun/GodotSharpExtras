@@ -9,13 +9,10 @@ public partial class Main : Node
     public delegate void TestEventHandler();
 
     [Notify]
-    public Node Nani { get; set; }
-
-    [Notify]
-    public Node Nani2 { get; set; }
-
-    [Notify]
     private string _holy;
+
+    [Notify]
+    private int _fuck;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready() { }

@@ -11,7 +11,7 @@ public abstract class SourceGeneratorForMethodWithAttribute<TAttribute>
 {
     protected abstract string GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        MethodDeclarationSyntax node,
         IMethodSymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options
@@ -19,7 +19,7 @@ public abstract class SourceGeneratorForMethodWithAttribute<TAttribute>
 
     protected sealed override string GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        MethodDeclarationSyntax node,
         ISymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options

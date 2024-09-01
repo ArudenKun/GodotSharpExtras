@@ -11,7 +11,7 @@ public abstract class SourceGeneratorForPropertyWithAttribute<TAttribute>
 {
     protected abstract string GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        PropertyDeclarationSyntax node,
         IPropertySymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options
@@ -19,7 +19,7 @@ public abstract class SourceGeneratorForPropertyWithAttribute<TAttribute>
 
     protected sealed override string GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        PropertyDeclarationSyntax node,
         ISymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options

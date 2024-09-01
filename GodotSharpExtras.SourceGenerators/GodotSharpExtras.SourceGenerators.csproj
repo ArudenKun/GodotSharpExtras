@@ -8,6 +8,7 @@
         <PackageId>*$(MSBuildProjectFile)*</PackageId>
         <AssemblyName>ArudenKun.GodotSharpExtras.SourceGenerators</AssemblyName>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <NoWarn>$(NoWarn);CA1014;CA1031;CA1062</NoWarn>

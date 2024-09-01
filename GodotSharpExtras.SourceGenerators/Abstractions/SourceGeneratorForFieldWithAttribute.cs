@@ -7,12 +7,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace GodotSharpExtras.SourceGenerators.Abstractions;
 
 public abstract class SourceGeneratorForFieldWithAttribute<TAttribute>
-    : SourceGeneratorForMemberWithAttribute<TAttribute, VariableDeclarationSyntax>
+    : SourceGeneratorForMemberWithAttribute<TAttribute, VariableDeclaratorSyntax>
     where TAttribute : Attribute
 {
     protected abstract string GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        FieldDeclarationSyntax node,
         IFieldSymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options
@@ -20,15 +20,34 @@ public abstract class SourceGeneratorForFieldWithAttribute<TAttribute>
 
     protected sealed override string GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        VariableDeclaratorSyntax node,
         ISymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options
-    ) => GenerateCode(compilation, node, (IFieldSymbol)symbol, attribute, options);
+    )
+    {
+        if (
+            node.Parent is VariableDeclarationSyntax
+            {
+                Parent: FieldDeclarationSyntax fieldDeclarationSyntax
+            }
+        )
+        {
+            return GenerateCode(
+                compilation,
+                fieldDeclarationSyntax,
+                (IFieldSymbol)symbol,
+                attribute,
+                options
+            );
+        }
+
+        throw new InvalidCastException("Unexpected syntax node type");
+    }
 
     protected override bool IsSyntaxTarget(SyntaxNode node, CancellationToken _) =>
         node
-            is VariableDeclarationSyntax
+            is VariableDeclaratorSyntax
             {
                 Parent: VariableDeclarationSyntax
                 {

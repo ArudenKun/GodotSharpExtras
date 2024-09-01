@@ -17,6 +17,10 @@ public abstract class SourceGeneratorForMemberWithAttribute<TAttribute, TDeclara
     where TAttribute : Attribute
     where TDeclarationSyntax : CSharpSyntaxNode
 {
+    protected const string Space = " ";
+    protected const string Comma = ",";
+    protected const string Tab = "\t";
+
     protected abstract string Id { get; }
 
     protected virtual IEnumerable<FileWithName> StaticSources => [];
@@ -65,13 +69,13 @@ public abstract class SourceGeneratorForMemberWithAttribute<TAttribute, TDeclara
             if (cancellationToken.IsCancellationRequested)
                 continue;
 
-            var node = Node((TDeclarationSyntax)generatorAttributeSyntaxContext.TargetNode);
+            var node = generatorAttributeSyntaxContext.TargetNode;
             var symbol = generatorAttributeSyntaxContext.TargetSymbol;
             var attribute = symbol.GetAttributes().First().MapToType<TAttribute>();
 
             var generatedCode = _GenerateCode(
                 compilation,
-                node,
+                (TDeclarationSyntax)node,
                 symbol,
                 attribute,
                 options.GlobalOptions
@@ -88,7 +92,7 @@ public abstract class SourceGeneratorForMemberWithAttribute<TAttribute, TDeclara
 
     protected abstract string GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        TDeclarationSyntax node,
         ISymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options
@@ -96,7 +100,7 @@ public abstract class SourceGeneratorForMemberWithAttribute<TAttribute, TDeclara
 
     private string _GenerateCode(
         Compilation compilation,
-        SyntaxNode node,
+        TDeclarationSyntax node,
         ISymbol symbol,
         TAttribute attribute,
         AnalyzerConfigOptions options
@@ -129,6 +133,4 @@ public abstract class SourceGeneratorForMemberWithAttribute<TAttribute, TDeclara
                 )
                 .Truncate(MaxFileLength - Ext.Length);
     }
-
-    protected virtual SyntaxNode Node(TDeclarationSyntax node) => node;
 }
