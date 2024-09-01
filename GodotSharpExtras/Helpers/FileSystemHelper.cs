@@ -13,6 +13,8 @@ namespace GodotSharpExtras.Helpers;
 [PublicAPI]
 public static class FileSystemHelper
 {
+    private static readonly IReadOnlyList<string> FilesAndDirsToCheck = ["._sc_", "._sc_.", "_sc_", "portable"];
+
     /// <summary>
     /// 
     /// </summary>
@@ -125,9 +127,8 @@ public static class FileSystemHelper
             return false;
 
         var baseDir = OS.GetExecutablePath().GetBaseDir();
-        string[] filesAndDirsToCheck = ["._sc_", "._sc_.", "_sc_", "portable"];
 
-        return filesAndDirsToCheck.Any(f =>
+        return FilesAndDirsToCheck.Any(f =>
             File.Exists(baseDir.JoinPath(f)) || Directory.Exists(baseDir.JoinPath(f))
         );
     }
@@ -169,6 +170,25 @@ public static class FileSystemHelper
 
         file.CopyTo(destFile, overwrite);
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="srcFile"></param>
+    /// <param name="destFile"></param>
+    /// <param name="overwrite"></param>
+    /// <exception cref="FileNotFoundException"></exception>
+    public static void MoveTo(this string srcFile, string destFile, bool overwrite = true)
+    {
+        srcFile = srcFile.NormalizePath();
+        destFile = destFile.NormalizePath();
+
+        var file = new FileInfo(srcFile);
+        if (!file.Exists)
+            throw new FileNotFoundException($"Source file not found: {file.FullName}");
+
+        file.MoveTo(destFile, overwrite);
+    }
 
     /// <summary>
     /// 
@@ -181,7 +201,7 @@ public static class FileSystemHelper
     public static void CopyDirectory(
         this string sourceDir,
         string destinationDir,
-        bool recursive = false,
+        bool recursive = true,
         bool overwrite = true
     )
     {
@@ -207,8 +227,54 @@ public static class FileSystemHelper
         foreach (var subDir in dir.GetDirectories())
         {
             var newDestinationDir = Path.Combine(destinationDir, subDir.Name);
-            CopyDirectory(subDir.FullName, newDestinationDir, true);
+            CopyDirectory(subDir.FullName, newDestinationDir);
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sourceDir"></param>
+    /// <param name="destinationDir"></param>
+    /// <param name="recursive"></param>
+    /// <param name="overwrite"></param>
+    /// <exception cref="DirectoryNotFoundException"></exception>
+    public static void MoveDirectory(
+        this string sourceDir,
+        string destinationDir,
+        bool recursive = true,
+        bool overwrite = true
+    )
+    {
+        sourceDir = sourceDir.NormalizePath();
+        destinationDir = destinationDir.NormalizePath();
+
+        var dir = new DirectoryInfo(sourceDir);
+
+        if (!dir.Exists)
+            throw new DirectoryNotFoundException($"Source Directory not found: {dir.FullName}");
+
+        EnsureDirectoryExists(destinationDir);
+
+        foreach (var file in dir.GetFiles())
+        {
+            var targetFilePath = Path.Combine(destinationDir, file.Name);
+            file.MoveTo(targetFilePath, overwrite);
+        }
+
+        if (!recursive)
+        {
+            dir.Delete(true);
+            return;
+        }
+
+        foreach (var subDir in dir.GetDirectories())
+        {
+            var newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+            MoveDirectory(subDir.FullName, newDestinationDir);
+        }
+
+        dir.Delete(true);
     }
 
     /// <summary>
