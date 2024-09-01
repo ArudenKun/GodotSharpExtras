@@ -5,11 +5,12 @@
         <LangVersion>12</LangVersion>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PackageId>*$(MSBuildProjectFile)*</PackageId>
         <AssemblyName>ArudenKun.GodotSharpExtras.SourceGenerators</AssemblyName>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-        <NoWarn>$(NoWarn);CA1014;CA1031</NoWarn>
+        <NoWarn>$(NoWarn);CA1014;CA1031;CA1062</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

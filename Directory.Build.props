@@ -10,18 +10,22 @@
     </PropertyGroup>
     
     <PropertyGroup Label="Warnings">
-        <NoWarn>$(NoWarn);CA1200;CA1003;CA1716;CA1711;CA1724;</NoWarn>
+        <NoWarn>$(NoWarn);CA1200;CA1003;CA1716;CA1711;CA1724</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Label="Nuget">
         <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile> 
-        <Version>0.0.0</Version>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Title>GodotSharpExtras</Title>
+        <Version>0.0.0</Version>
+        <Description>Utilities, helpers and source generators for C# godot 4.x developement</Description>
+        <Copyright>© 2024 ArudenKun</Copyright>
         <Authors>ArudenKun</Authors>
         <Company>ArudenKun</Company>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/ArudenKun/GodotSharpExtras</RepositoryUrl>
+        <PackageId>GodotSharpExtras</PackageId>
+        <PackageTags>Godot;Godot4;gamedev;GameDevelopment;C#</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using GodotSharpExtras.Attributes;
 using GodotSharpExtras.SourceGenerators.Additions.Abstractions;
+using GodotSharpExtras.SourceGenerators.Attributes;
 using GodotSharpExtras.SourceGenerators.Extensions;
 using GodotSharpExtras.SourceGenerators.Extensions.CaseExtensions;
 using GodotSharpExtras.SourceGenerators.Utilities;

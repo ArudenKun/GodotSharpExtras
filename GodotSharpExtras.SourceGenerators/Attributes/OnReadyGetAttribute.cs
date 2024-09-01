@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GodotSharpExtras.Attributes;
+namespace GodotSharpExtras.SourceGenerators.Attributes;
 
 /// <summary>
 /// Generates code to initialize this property or field when the node is ready, and make the

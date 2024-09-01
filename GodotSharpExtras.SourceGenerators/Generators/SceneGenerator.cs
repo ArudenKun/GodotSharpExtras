@@ -3,9 +3,9 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using GodotSharpExtras.Attributes;
 using GodotSharpExtras.SourceGenerators.Additions;
 using GodotSharpExtras.SourceGenerators.Additions.Abstractions;
+using GodotSharpExtras.SourceGenerators.Attributes;
 using GodotSharpExtras.SourceGenerators.Extensions;
 using GodotSharpExtras.SourceGenerators.Models;
 using GodotSharpExtras.SourceGenerators.Utilities;
@@ -18,7 +18,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace GodotSharpExtras.SourceGenerators.Generators;
 
 [Generator]
-internal sealed class SceneGenerator : IIncrementalGenerator
+public sealed class SceneGenerator : IIncrementalGenerator
 {
     private const string Id = "SG";
 

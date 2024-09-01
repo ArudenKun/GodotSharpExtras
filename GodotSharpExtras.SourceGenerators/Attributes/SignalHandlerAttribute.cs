@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GodotSharpExtras.Attributes;
+namespace GodotSharpExtras.SourceGenerators.Attributes;
 
 /// <summary>
 /// Marks a function as a Event Handler for signals coming from Godot nodes.
