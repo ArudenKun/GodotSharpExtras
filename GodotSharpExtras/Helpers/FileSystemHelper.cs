@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Godot;
 using JetBrains.Annotations;
-using FileAccess = Godot.FileAccess;
 
 namespace GodotSharpExtras.Helpers;
 
@@ -14,6 +13,47 @@ namespace GodotSharpExtras.Helpers;
 [PublicAPI]
 public static class FileSystemHelper
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fileNameOrPath"></param>
+    public static void EnsureContainingDirectoryExists(string fileNameOrPath)
+    {
+        var fullPath = Path.GetFullPath(fileNameOrPath); // No matter if relative or absolute path is given to this.
+        var dir = Path.GetDirectoryName(fullPath);
+        EnsureDirectoryExists(dir);
+    }
+
+    /// <summary>
+    ///     Makes sure that directory <paramref name="dir" /> is created if it does not exist.
+    /// </summary>
+    /// <remarks>Method does not throw exceptions unless provided directory path is invalid.</remarks>
+    public static void EnsureDirectoryExists(string? dir)
+    {
+        // If root is given, then do not worry.
+        if (!string.IsNullOrWhiteSpace(dir) && !Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="replacementChar"></param>
+    /// <returns></returns>
+    public static string SanitizeFileName(this string source, char replacementChar = '_')
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        var blackList = new HashSet<char>(Path.GetInvalidFileNameChars())
+            { '"' }; // '"' not invalid in Linux, but causes problems
+        var output = source.ToCharArray();
+        for (int i = 0, ln = output.Length; i < ln; i++)
+            if (blackList.Contains(output[i]))
+                output[i] = replacementChar;
+
+        return new string(output);
+    }
+
     /// <summary>
     ///
     /// </summary>
@@ -71,8 +111,8 @@ public static class FileSystemHelper
     /// <param name="path"></param>
     /// <returns></returns>
     public static bool IsDirEmpty(this string path) =>
-        !DirAccess.DirExistsAbsolute(path.NormalizePath())
-        || DirAccess.GetFilesAt(path.NormalizePath()).Length == 0;
+        !Directory.Exists(path.NormalizePath())
+        || Directory.GetFiles(path.NormalizePath()).Length == 0;
 
     /// <summary>
     ///
@@ -102,114 +142,89 @@ public static class FileSystemHelper
             ? OS.GetExecutablePath().GetBaseDir().JoinPath("data")
             : "user://".NormalizePath();
 
-        if (!DirAccess.DirExistsAbsolute(path))
+        if (!Directory.Exists(path))
         {
-            DirAccess.MakeDirRecursiveAbsolute(path);
+            EnsureDirectoryExists(path);
         }
 
         return path.JoinPath(parts);
     }
 
-    // public static void CopyTo(this string srcFile, string destFile)
-    // {
-    //     var file = new FileInfo(srcFile);
-    //     if (!file.Exists)
-    //         throw new FileNotFoundException($"Source file not found: {file.FullName}");
-    //
-    //     file.CopyTo(destFile);
-    // }
-
     /// <summary>
-    ///
+    /// 
     /// </summary>
     /// <param name="srcFile"></param>
     /// <param name="destFile"></param>
+    /// <param name="overwrite"></param>
     /// <exception cref="FileNotFoundException"></exception>
-    public static void CopyTo(this string srcFile, string destFile)
+    public static void CopyTo(this string srcFile, string destFile, bool overwrite = true)
     {
         srcFile = srcFile.NormalizePath();
         destFile = destFile.NormalizePath();
 
-        var fileExists = FileAccess.FileExists(srcFile);
+        var file = new FileInfo(srcFile);
+        if (!file.Exists)
+            throw new FileNotFoundException($"Source file not found: {file.FullName}");
 
-        if (!fileExists)
-        {
-            throw new FileNotFoundException($"Source file not found: {srcFile}");
-        }
-
-        DirAccess.CopyAbsolute(srcFile, destFile);
+        file.CopyTo(destFile, overwrite);
     }
 
-    // public static void CopyDirectory(
-    //     this string sourceDir,
-    //     string destinationDir,
-    //     bool recursive = false
-    // )
-    // {
-    //     var dir = new DirectoryInfo(sourceDir);
-    //
-    //     if (!dir.Exists)
-    //         throw new DirectoryNotFoundException($"Source Directory not found: {dir.FullName}");
-    //
-    //     var dirs = dir.GetDirectories();
-    //
-    //     Directory.CreateDirectory(destinationDir);
-    //
-    //     foreach (var file in dir.GetFiles())
-    //     {
-    //         var targetFilePath = Path.Combine(destinationDir, file.Name);
-    //         file.CopyTo(targetFilePath);
-    //     }
-    //
-    //     if (!recursive)
-    //         return;
-    //
-    //     foreach (var subDir in dirs)
-    //     {
-    //         var targetDirPath = Path.Combine(destinationDir, subDir.Name);
-    //         CopyDirectory(subDir.FullName, targetDirPath, true);
-    //     }
-    // }
-
-
     /// <summary>
-    ///
+    /// 
     /// </summary>
     /// <param name="sourceDir"></param>
     /// <param name="destinationDir"></param>
     /// <param name="recursive"></param>
+    /// <param name="overwrite"></param>
     /// <exception cref="DirectoryNotFoundException"></exception>
     public static void CopyDirectory(
         this string sourceDir,
         string destinationDir,
-        bool recursive = false
+        bool recursive = false,
+        bool overwrite = true
     )
     {
         sourceDir = sourceDir.NormalizePath();
         destinationDir = destinationDir.NormalizePath();
 
-        using var dirAccess = DirAccess.Open(sourceDir);
+        var dir = new DirectoryInfo(sourceDir);
 
-        if (dirAccess is null)
+        if (!dir.Exists)
+            throw new DirectoryNotFoundException($"Source Directory not found: {dir.FullName}");
+
+        EnsureDirectoryExists(destinationDir);
+
+        foreach (var file in dir.GetFiles())
         {
-            throw new DirectoryNotFoundException($"Source Directory not found: {sourceDir}");
-        }
-
-        dirAccess.MakeDirRecursive(destinationDir);
-
-        foreach (var file in dirAccess.GetFiles())
-        {
-            var targetFilePath = Path.Combine(destinationDir, file);
-            file.CopyTo(targetFilePath);
+            var targetFilePath = Path.Combine(destinationDir, file.Name);
+            file.CopyTo(targetFilePath, overwrite);
         }
 
         if (!recursive)
             return;
 
-        foreach (var subDir in dirAccess.GetDirectories())
+        foreach (var subDir in dir.GetDirectories())
         {
-            var targetDirPath = Path.Combine(destinationDir, subDir);
-            CopyDirectory(Path.Combine(sourceDir, subDir), targetDirPath, true);
+            var newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+            CopyDirectory(subDir.FullName, newDestinationDir, true);
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="dirPath"></param>
+    public static void DeleteDirectory(string dirPath)
+    {
+        dirPath = dirPath.NormalizePath();
+
+        var dir = new DirectoryInfo(dirPath);
+
+        if (!dir.Exists)
+        {
+            throw new DirectoryNotFoundException($"Directory not found: {dir.FullName}");
+        }
+
+        dir.Delete(true);
     }
 }
