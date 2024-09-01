@@ -19,6 +19,7 @@ public static class FileSystemHelper
     /// <param name="fileNameOrPath"></param>
     public static void EnsureContainingDirectoryExists(string fileNameOrPath)
     {
+        fileNameOrPath = fileNameOrPath.NormalizePath();
         var fullPath = Path.GetFullPath(fileNameOrPath); // No matter if relative or absolute path is given to this.
         var dir = Path.GetDirectoryName(fullPath);
         EnsureDirectoryExists(dir);
@@ -91,7 +92,7 @@ public static class FileSystemHelper
             return path;
         newPath = Path.GetFullPath(newPath);
         newPath =
-            OSHelper.GetPlatform() == PlatformType.Windows
+            OSHelper.GetPlatform() == Platform.Windows
                 ? newPath.Replace("/", @"\", StringComparison.InvariantCulture)
                 : newPath.Replace(@"\", "/", StringComparison.InvariantCulture);
         return newPath;

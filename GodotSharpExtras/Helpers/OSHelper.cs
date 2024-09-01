@@ -6,24 +6,44 @@ namespace GodotSharpExtras.Helpers;
 /// <summary>
 ///
 /// </summary>
-public enum PlatformType
+public enum Platform
 {
     /// <summary>
     /// 
     /// </summary>
     Windows,
+
     /// <summary>
     /// 
     /// </summary>
     Linux,
+
     /// <summary>
     /// 
     /// </summary>
-    Mac,
+    // ReSharper disable once InconsistentNaming
+    MacOS,
+
     /// <summary>
     /// 
     /// </summary>
-    Unsupported
+    Android,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    // ReSharper disable once InconsistentNaming
+    IOS,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    Web,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    NotSupported
 }
 
 /// <summary>
@@ -37,15 +57,39 @@ public static class OSHelper
     /// 
     /// </summary>
     /// <returns></returns>
-    public static PlatformType GetPlatform()
+    public static Platform GetPlatform()
     {
-        return OS.GetName() switch
+        // return OS.GetName() switch
+        // {
+        //     "Windows" or "UWP" => Platform.Windows,
+        //     "macOS" => Platform.Mac,
+        //     "Linux" or "FreeBSD" or "NetBSD" or "OpenBSD" or "BSD" => Platform.Linux,
+        //     _ => Platform.Unsupported
+        // };
+
+        switch (OS.GetName())
         {
-            "Windows" or "UWP" => PlatformType.Windows,
-            "macOS" => PlatformType.Mac,
-            "Linux" or "FreeBSD" or "NetBSD" or "OpenBSD" or "BSD" => PlatformType.Linux,
-            _ => PlatformType.Unsupported
-        };
+            case "Windows":
+            case "UWP":
+                return Platform.Windows;
+            case "macOS":
+                GD.Print("Welcome to macOS!");
+                return Platform.MacOS;
+            case "Linux":
+            case "FreeBSD":
+            case "NetBSD":
+            case "OpenBSD":
+            case "BSD":
+                return Platform.Linux;
+            case "Android":
+                return Platform.Android;
+            case "iOS":
+                return Platform.IOS;
+            case "Web":
+                return Platform.Web;
+            default:
+                return Platform.NotSupported;
+        }
     }
 
     /// <summary>
