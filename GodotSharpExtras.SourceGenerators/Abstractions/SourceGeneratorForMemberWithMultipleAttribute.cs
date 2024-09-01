@@ -74,9 +74,9 @@ public abstract class SourceGeneratorForMemberWithMultipleAttribute<TAttribute, 
             var attributes = symbol
                 .GetAttributes()
                 .Select(x => x.MapToType<TAttribute>())
-                .ToArray();
+                .ToImmutableArray();
 
-            var generatedCode = _GenerateCode(
+            var generatedCode = GenerateCode(
                 compilation,
                 (TDeclarationSyntax)node,
                 symbol,
@@ -97,27 +97,9 @@ public abstract class SourceGeneratorForMemberWithMultipleAttribute<TAttribute, 
         Compilation compilation,
         TDeclarationSyntax node,
         ISymbol symbol,
-        TAttribute[] attributes,
+        ImmutableArray<TAttribute> attributes,
         AnalyzerConfigOptions options
     );
-
-    private string _GenerateCode(
-        Compilation compilation,
-        TDeclarationSyntax node,
-        ISymbol symbol,
-        TAttribute[] attributes,
-        AnalyzerConfigOptions options
-    )
-    {
-        try
-        {
-            return GenerateCode(compilation, node, symbol, attributes, options);
-        }
-        catch (Exception)
-        {
-            return string.Empty;
-        }
-    }
 
     private const string Ext = ".g.cs";
     private const int MaxFileLength = 255;

@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Threading;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace GodotSharpExtras.SourceGenerators.Abstractions;
 
-public abstract class SourceGeneratorForDelegateWithAttribute<TAttribute>
-    : SourceGeneratorForMemberWithAttribute<TAttribute, DelegateDeclarationSyntax>
+public abstract class SourceGeneratorForDelegateWithMultipleAttribute<TAttribute>
+    : SourceGeneratorForMemberWithMultipleAttribute<TAttribute, DelegateDeclarationSyntax>
     where TAttribute : Attribute
 {
     protected abstract string GenerateCode(
         Compilation compilation,
         DelegateDeclarationSyntax node,
         INamedTypeSymbol symbol,
-        TAttribute attribute,
+        ImmutableArray<TAttribute> attributes,
         AnalyzerConfigOptions options
     );
 
@@ -22,7 +22,7 @@ public abstract class SourceGeneratorForDelegateWithAttribute<TAttribute>
         Compilation compilation,
         DelegateDeclarationSyntax node,
         ISymbol symbol,
-        TAttribute attribute,
+        ImmutableArray<TAttribute> attributes,
         AnalyzerConfigOptions options
-    ) => GenerateCode(compilation, node, (INamedTypeSymbol)symbol, attribute, options);
+    ) => GenerateCode(compilation, node, (INamedTypeSymbol)symbol, attributes, options);
 }

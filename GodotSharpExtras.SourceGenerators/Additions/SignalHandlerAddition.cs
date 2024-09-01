@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using GodotSharpExtras.Attributes;
 using GodotSharpExtras.SourceGenerators.Additions.Abstractions;
-using GodotSharpExtras.SourceGenerators.Attributes;
 using GodotSharpExtras.SourceGenerators.Extensions;
 using GodotSharpExtras.SourceGenerators.Extensions.CaseExtensions;
 using GodotSharpExtras.SourceGenerators.Utilities;
@@ -45,7 +45,7 @@ internal sealed class SignalHandlerAddition : PartialClassAddition
                 IFieldSymbol fieldSymbol => fieldSymbol.Type,
                 IPropertySymbol propertySymbol => propertySymbol.Type,
                 ITypeSymbol typeSymbol => typeSymbol,
-                _ => throw new ArgumentOutOfRangeException(),
+                _ => throw new InvalidCastException("Unknown signal type"),
             };
 
             if (!EventSymbolsCache.TryGetValue(signalName, out var eventSymbol))

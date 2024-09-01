@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace GodotSharpExtras.SourceGenerators.Attributes;
+// ReSharper disable once CheckNamespace
+namespace GodotSharpExtras.Attributes;
 
 /// <summary>
 /// Generates code to initialize this property or field when the node is ready, and make the
@@ -8,7 +9,7 @@ namespace GodotSharpExtras.SourceGenerators.Attributes;
 /// fields of types that subclass either Node or Resource.
 /// </summary>
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-public class OnReadyGetAttribute : Attribute
+public sealed class OnReadyGetAttribute : Attribute
 {
     public string? Path { get; }
 

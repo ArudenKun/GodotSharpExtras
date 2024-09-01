@@ -1,4 +1,4 @@
-﻿using GodotSharpExtras.SourceGenerators.Attributes;
+﻿using GodotSharpExtras.Attributes;
 using GodotSharpExtras.SourceGenerators.Extensions;
 using GodotSharpExtras.SourceGenerators.Extensions.CaseExtensions;
 using GodotSharpExtras.SourceGenerators.Models;

@@ -1,15 +1,16 @@
 ﻿using System;
 
-namespace GodotSharpExtras.SourceGenerators.Attributes;
+// ReSharper disable once CheckNamespace
+namespace GodotSharpExtras.Attributes;
 
 /// <summary>
-/// Marks a function as a Event Handler for signals coming from Godot nodes.
+/// Marks a method as a Event Handler for signals coming from Godot nodes.
 /// </summary>
 /// <remarks>
 /// This is used to make code more readable, and easier to extend, without having to constantly add to the _Ready() function.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public class SignalHandlerAttribute : Attribute
+public sealed class SignalHandlerAttribute : Attribute
 {
     public string? VariableName { get; set; }
 

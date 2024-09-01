@@ -1,6 +1,6 @@
 ﻿namespace GodotSharpExtras.SourceGenerators.Models;
 
-internal class SceneTreeNode
+internal sealed class SceneTreeNode
 {
     public string Name { get; init; }
     public string Type { get; set; }
