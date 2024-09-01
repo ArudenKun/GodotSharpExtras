@@ -1,0 +1,70 @@
+name: "📦 Dev Release"
+
+on:
+  push:
+    branches:
+      - dev
+      - 3.x-dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    name: "🛠️ Build Dev Release"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_NOLOGO: true
+      NUGET_CERT_REVOCATION_MODE: offline
+    steps:
+      - name: 🧾 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔎 Read Current Version
+        id: current-version
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        with:
+          fallback: "0.0.0"
+
+      - name: 🖨 Print Current Version
+        run: |
+          echo "Current Version: ${{ steps.current-version.outputs.tag }}"
+
+      - name: 🔎 Get Commit Hash
+        id: commit-hash
+        run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: 🧮 Compute Next Version
+        id: next-version
+        uses: vers-one/dotnet-project-version-updater@v1.6
+        with:
+          file: Directory.Build.props
+          version: ${{ steps.current-version.outputs.tag }}-dev.${{ steps.commit-hash.outputs.hash }}
+
+      - name: 🖨 Print New Version
+        run: |
+          echo "New Version: ${{ steps.next-version.outputs.newVersion }}"
+
+      - name: 📦 Build Package
+        run: |
+          dotnet build -c Release
+
+      - name: 🔎 Get Package Path
+        id: package-path
+        run: |
+          package=$(find nupkg -name "ArudenKun.GodotSharpExtras.*.nupkg")
+          echo "package=$package" >> "$GITHUB_OUTPUT"
+          echo "📦 Found package: $package"
+
+      - name: 🛜 Publish to Private Nuget
+        run: |
+          dotnet nuget push "${{ steps.package-path.outputs.package }}" \
+            --api-key "${{ secrets.PRIVATE_NUGET_API_KEY }}" \
+            --source "${{ secrets.PRIVATE_NUGET_URL }}" --skip-duplicate
